@@ -1,0 +1,53 @@
+<h2 class="content-block">Профиль</h2>
+
+<div class="content-block dx-card responsive-paddings">
+  <div class="form-avatar">
+    <!--TODO: do not send request when no avatar-->
+    <img [src]="downloadUrl + '/avatar' | secured | async"/>
+  </div>
+  <dx-button title="Обновить" icon="upload"></dx-button>
+</div>
+
+<div class="content-block dx-card responsive-paddings">
+  <dx-form id="form"
+           [(formData)]="userAccount"
+           labelLocation="top"
+           [colCountByScreen]="colCountByScreen">
+    <dxi-item
+      dataField="email" [editorOptions]="{ disabled: true }">
+      <dxo-label
+        [text]="'Электронная почта'">
+      </dxo-label>
+    </dxi-item>
+
+    <dxi-item dataField="firstname">
+      <dxo-label
+        [text]="'Имя'">
+      </dxo-label>
+    </dxi-item>
+
+    <dxi-item dataField="surname">
+      <dxo-label
+        [text]="'Фамилия'">
+      </dxo-label>
+    </dxi-item>
+
+    <dxi-item dataField="patronymic">
+      <dxo-label
+        [text]="'Отчество'">
+      </dxo-label>
+    </dxi-item>
+  </dx-form>
+
+  <!--TODO: update profile-->
+  <dx-button text="Сохранить"
+             (onClick)="update()">
+  </dx-button>
+</div>
+
+<!--TODO: upload avatar-->
+<!--<app-file-upload-->
+<!--  #avatarFileUpload-->
+<!--  accept="image/*"-->
+<!--  (fileUploaded)="onAvatarUploaded($event)">-->
+<!--</app-file-upload>-->

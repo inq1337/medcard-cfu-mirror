@@ -1,0 +1,35 @@
+.dx-popup-content {
+  width: auto;
+  max-width: 100%;
+  padding: 20px;
+}
+
+.dx-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.create-button {
+  margin-left: auto;
+}
+
+.cancel-button {
+
+}
+
+.shared-url-container {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+ }
+
+.shared-url-input {
+  flex-grow: 1;
+}
+

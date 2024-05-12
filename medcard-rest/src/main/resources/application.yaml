@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/med-card
+    username: med
+    password: 123
+
+  liquibase:
+    change-log: classpath:db/master.xml
+    driver-class-name: org.postgresql.Driver
+    contexts: dev
+
+  cors:
+    allowed-origins:
+      http://localhost:4200,
+
+  security:
+    jwt:
+      secret-key: theysaidweneedmoresymbolssoidontknowwhatelsecanbehere
+      lifetime: 60
+
+minio:
+  bucket: medcard
+  url: http://localhost:9000
+  accessKey: med
+  secretKey: 12345678

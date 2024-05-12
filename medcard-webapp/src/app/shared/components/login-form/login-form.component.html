@@ -1,0 +1,49 @@
+<form class="login-form" (submit)="onSubmit($event)">
+  <dx-form [formData]="formData" [disabled]="loading">
+
+    <dxi-item dataField="email" editorType="dxTextBox"
+              [editorOptions]="{ stylingMode: 'filled', placeholder: 'Электронная почта', mode: 'email' }">
+      <dxi-validation-rule type="required" message="Введите почту"></dxi-validation-rule>
+      <dxi-validation-rule type="email" message="Некорректный адрес электронной почты"></dxi-validation-rule>
+      <dxo-label [visible]="false"></dxo-label>
+    </dxi-item>
+
+    <dxi-item dataField="password" editorType="dxTextBox"
+              [editorOptions]="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }">
+      <dxi-validation-rule type="required" message="Введите пароль"></dxi-validation-rule>
+      <dxo-label [visible]="false"></dxo-label>
+    </dxi-item>
+
+    <dxi-item dataField="rememberMe" editorType="dxCheckBox"
+              [editorOptions]="{ text: 'Запомнить', elementAttr: { class: 'form-text' } }">
+      <dxo-label [visible]="false"></dxo-label>
+    </dxi-item>
+
+    <dxi-item itemType="button">
+      <dxo-button-options width="100%" type="default" [useSubmitBehavior]="true" [template]="'signInTemplate'">
+      </dxo-button-options>
+    </dxi-item>
+
+    <!--    <dxi-item>-->
+    <!--      <div class="link">-->
+    <!--        <a routerLink="/reset-password">Забыли пароль?</a>-->
+    <!--      </div>-->
+    <!--    </dxi-item>-->
+
+    <dxi-item itemType="button">
+      <dxo-button-options text="Создать аккаунт" width="100%" [onClick]="onCreateAccountClick"></dxo-button-options>
+    </dxi-item>
+
+    <ng-container *dxTemplate="let item of 'signInTemplate'">
+      <div>
+        <span class="dx-button-text">
+          <ng-container *ngIf="loading; else notLoading">
+            <dx-load-indicator width="24px" height="24px" [visible]="true"></dx-load-indicator>
+          </ng-container>
+          <ng-template #notLoading>Войти</ng-template>
+        </span>
+      </div>
+    </ng-container>
+
+  </dx-form>
+</form>

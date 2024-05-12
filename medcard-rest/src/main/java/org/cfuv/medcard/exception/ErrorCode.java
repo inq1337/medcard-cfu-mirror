@@ -1,0 +1,14 @@
+package org.cfuv.medcard.exception;
+
+public enum ErrorCode {
+    INTERNAL_SERVER_ERROR,
+    AUTHENTICATION_ERROR,
+    ACCESS_DENIED,
+    VALIDATION_FAILED,
+    ILLEGAL_STATE,
+    ILLEGAL_ARGUMENT,
+    NOT_FOUND,
+    ACCOUNT_LOCKED,
+    TOKEN_EXPIRED,
+    INVALID_TOKEN
+}

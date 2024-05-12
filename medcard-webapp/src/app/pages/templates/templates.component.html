@@ -1,0 +1,93 @@
+<h2 class="content-block">Шаблоны анализов</h2>
+
+<dx-data-grid class="dx-card wide-card"
+              id="suDataGrid"
+              [dataSource]="dataSource"
+              [showBorders]="false"
+              [columnAutoWidth]="true"
+              [columnHidingEnabled]="true"
+              (onToolbarPreparing)="onToolbarPreparing($event)"
+              (onOptionChanged)="onGridOptionsChanged($event)"
+              [masterDetail]="{ enabled: true, template: 'detail' }">
+
+  <dxo-remote-operations
+    [paging]="true"
+    [sorting]="true"
+    [filtering]="true">
+  </dxo-remote-operations>
+
+  <dxo-search-panel
+    [visible]="true"
+    [width]="240"
+    placeholder="Поиск...">
+  </dxo-search-panel>
+
+  <dxo-filter-row [visible]="false"></dxo-filter-row>
+
+  <dxo-paging [pageSize]="5"></dxo-paging>
+  <dxo-pager [showPageSizeSelector]="true"
+             [showInfo]="true"
+             [allowedPageSizes]="[5, 50, 100]"></dxo-pager>
+
+  <dxo-editing
+    [allowAdding]="true"
+    [allowUpdating]="true"
+    [allowDeleting]="true">
+
+    <dxo-texts
+      [addRow]="'Новый'"
+      [editRow]="'Редактировать'"
+      [deleteRow]="'Удалить'"
+      [confirmDeleteMessage]="'Вы уверены, что хотите удалить?'"
+      [saveRowChanges]="'Сохранить'"
+      [cancelRowChanges]="'Отмена'">
+    </dxo-texts>
+
+    <dxo-popup
+      title="Шаблон"
+      [showTitle]="true">
+    </dxo-popup>
+
+  </dxo-editing>
+
+  <dxi-column
+    dataField="name"
+    [allowEditing]="true"
+    caption="Название">
+  </dxi-column>
+
+  <!--TODO: make it look better-->
+  <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
+  [allowEditing]="true"
+  <div *dxTemplate="let template of 'detail'">
+    <div class="master-detail-caption">{{
+        'Параметры шаблона'
+      }}
+    </div>
+    <dx-data-grid
+      (onRowUpdated)="updateTemplate(template.data)"
+      (onRowInserted)="updateTemplate(template.data)"
+      (onRowRemoved)="updateTemplate(template.data)"
+      [dataSource]="template.data.parameters"
+      [showBorders]="false"
+      [columnAutoWidth]="true"
+      [columnHidingEnabled]="true"
+      [editing]="{ allowUpdating: true, allowDeleting: true, allowAdding: true }">
+      <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
+      <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
+      <dxi-column dataField="hasState" caption="Наличие состояния" dataType="boolean"></dxi-column>
+    </dx-data-grid>
+  </div>
+
+  <!--TODO: do I need it?-->
+  <!--  <dxi-column-->
+  <!--    [allowEditing]="false"-->
+  <!--    dataField="createdAt"-->
+  <!--    caption="Создан"-->
+  <!--    dataType="date"-->
+  <!--    format="dd.MM.yyyy hh:mm"-->
+  <!--    [formItem]="{visible: false}"-->
+  <!--    [allowSearch]="false">-->
+  <!--  </dxi-column>-->
+
+</dx-data-grid>
