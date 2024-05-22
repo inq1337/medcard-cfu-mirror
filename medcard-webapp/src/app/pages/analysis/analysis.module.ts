@@ -6,11 +6,14 @@ import {
   DxDateBoxModule,
   DxListModule,
   DxPopupModule,
+  DxTabPanelModule,
+  DxTextAreaModule,
   DxTextBoxModule
 } from 'devextreme-angular';
 import {RouterModule} from '@angular/router';
 import {AnalysisComponent} from "./analysis.component";
 import {SecuredPipe} from "../../services/secured.pipe";
+import {AnalysisDetailComponent} from "../analysis-detail/analysis-detail.component";
 
 @NgModule({
   imports: [
@@ -22,10 +25,13 @@ import {SecuredPipe} from "../../services/secured.pipe";
     DxButtonModule,
     DxListModule,
     DxDateBoxModule,
-    DxTextBoxModule
+    DxTextBoxModule,
+    DxTextAreaModule,
+    DxTabPanelModule
   ],
   declarations: [
-    AnalysisComponent
+    AnalysisComponent,
+    AnalysisDetailComponent
   ],
   exports: [
     AnalysisComponent

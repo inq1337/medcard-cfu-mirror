@@ -43,7 +43,7 @@ export class SessionService {
   login(email: string, password: string, rememberMe: boolean) {
     this.authenticationService.auth(new AuthRequest(email, password, rememberMe)).subscribe({
       next: (response: JWTResponse) => {
-        this.tokenStorageService.saveToken(response.accessToken)
+        this.tokenStorageService.saveToken(response.token)
         this.loggedIn = true
         this.router.navigate([this._lastAuthenticatedPath]);
         // TODO: got permissions from token
@@ -75,7 +75,7 @@ export class SessionService {
   async createAccount(email: string, password: string, firstname: string, surname: string, patronymic: string) {
     this.authenticationService.signup(new SignupRequest(email, password, firstname, surname, patronymic)).subscribe({
       next: (response: JWTResponse) => {
-        this.tokenStorageService.saveToken(response.accessToken)
+        this.tokenStorageService.saveToken(response.token)
         this.loggedIn = true
         this.router.navigate([this._lastAuthenticatedPath]);
         // TODO: got permissions from token

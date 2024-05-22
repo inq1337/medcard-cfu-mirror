@@ -25,7 +25,7 @@ public class UserDetailsImpl implements UserDetails {
         this(
                 cardUser.getEmail(),
                 cardUser.getPassword(),
-                ImmutableSet.of(new SimpleGrantedAuthority(cardUser.getRole().toString())),
+                ImmutableSet.of(new SimpleGrantedAuthority(cardUser.getPrivilegeLevel().toString())),
                 accountNonLocked,
                 true, true, true
         );

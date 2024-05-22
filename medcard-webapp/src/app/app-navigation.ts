@@ -1,16 +1,16 @@
 export const navigation = [
   {
-    text: 'Home',
+    text: 'Домашняя',
     path: '/home',
     icon: 'home'
   },
   {
-    icon: 'home',
+    icon: 'textdocument',
     text: 'Анализы',
     path: '/analysis'
   },
   {
-    icon: 'home',
+    icon: 'fields',
     text: 'Шаблоны',
     path: '/templates'
   }

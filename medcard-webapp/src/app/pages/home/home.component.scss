@@ -1,34 +1,32 @@
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .logos-container {
-  margin: 20px 0 40px 0;
-  text-align: center;
-  svg {
-    display: inline-block;
-  }
+  margin-right: 20px;
 }
 
-.devextreme-logo {
-  width: 200px;
-  height: 34px;
-  margin-bottom: 13px;
+.logo {
+  width: 250px;
+  height: auto;
 }
 
-.angular-logo {
-  width: 220px;
-  height: 62px;
+.intro-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
 }
 
-.plus {
-  margin: 15px 10px;
-  width: 22px;
-  height: 22px;
+.intro-paragraph {
+  margin-bottom: 10px;
 }
 
-:host-context(.screen-x-small) .logos-container {
-  svg {
-    width: 100%;
-    display: block;
-    &.plus {
-      margin: 0;
-    }
-  }
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }

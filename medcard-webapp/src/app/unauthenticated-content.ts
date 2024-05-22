@@ -25,10 +25,10 @@ export class UnauthenticatedContentComponent {
   get title() {
     const path = this.router.url.split('/')[1];
     switch (path) {
-      case 'login-form': return 'Sign In';
-      case 'reset-password': return 'Reset Password';
-      case 'create-account': return 'Sign Up';
-      case 'change-password': return 'Change Password';
+      case 'login-form': return 'Войти';
+      case 'reset-password': return 'Восстановление пароля';
+      case 'create-account': return 'Регистрация';
+      case 'change-password': return 'Изменить пароль';
       default: return '';
     }
   }

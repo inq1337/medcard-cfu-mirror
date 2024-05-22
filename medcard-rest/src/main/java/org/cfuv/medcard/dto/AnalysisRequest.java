@@ -7,6 +7,7 @@ import java.util.List;
 
 public record AnalysisRequest(String name,
                               String templateName,
+                              Long templateId,
                               LocalDate analysisDate,
                               List<AnalysisParameter> parameters,
                               String commentary) {

@@ -4,7 +4,6 @@ import DataSource from 'devextreme/data/data_source';
 import CustomStore from 'devextreme/data/custom_store';
 import {LoadOptions} from 'devextreme/data';
 import {ScreenService} from '../../shared/services';
-import {ToolbarPreparingEvent} from "devextreme/ui/data_grid";
 import {lastValueFrom} from "rxjs";
 import {TemplatesService} from "../../services/templates.service";
 import {Page} from "../../model/page";
@@ -41,26 +40,6 @@ export class TemplatesComponent {
       })
     );
     this.mobileMode = this.screenService.sizes['screen-x-small'];
-  }
-
-  onToolbarPreparing(e: ToolbarPreparingEvent) {
-    if (e.toolbarOptions.items) {
-      e.toolbarOptions.items.find(value => value.name === 'searchPanel').location = 'center';
-      e.toolbarOptions.items.unshift({
-          location: 'before',
-          widget: 'dxButton',
-          options: {
-            icon: 'refresh',
-            text: 'Обновить',
-            onClick: this.refreshDataGrid.bind(this)
-          }
-        }
-      );
-    }
-  }
-
-  refreshDataGrid() {
-    this.dataGrid.instance.refresh();
   }
 
   private load(loadOptions: LoadOptions): Promise<any> {

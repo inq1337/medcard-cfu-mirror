@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +97,14 @@ public class ExceptionTranslator {
     }
 
     // Java exceptions
+
+    @ExceptionHandler(NotImplementedException.class)
+    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    @ResponseBody
+    public ApiError processNotImplementedException(NotImplementedException ex) {
+        log.warn(ex.getMessage());
+        return new ApiError(ErrorCode.ILLEGAL_STATE, ex.getMessage());
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

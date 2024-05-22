@@ -1,18 +1,21 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {DevExtremeModule, DxDataGridModule} from 'devextreme-angular';
 import {RouterModule} from '@angular/router';
 import {TemplatesComponent} from './templates.component';
+import {TemplatesDetailComponent} from "../templates-detail/templates-detail.component";
+import {DevExtremeModule, DxDataGridModule} from "devextreme-angular";
 
 @NgModule({
   imports: [
     CommonModule,
     DxDataGridModule,
     RouterModule,
+    DxDataGridModule,
     DevExtremeModule
   ],
   declarations: [
-    TemplatesComponent
+    TemplatesComponent,
+    TemplatesDetailComponent
   ],
   exports: [
     TemplatesComponent

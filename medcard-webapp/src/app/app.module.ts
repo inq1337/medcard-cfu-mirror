@@ -21,7 +21,17 @@ import {AuthenticationService} from "./services/authentication.service";
 import {TemplatesModule} from "./pages/templates/templates.module";
 import {AnalysisModule} from "./pages/analysis/analysis.module";
 import {SharedAnalysisComponent} from './pages/shared-analysis/shared-analysis.component';
-import {DxDataGridModule, DxTemplateModule} from "devextreme-angular";
+import {
+  DxButtonModule,
+  DxDataGridModule,
+  DxDateBoxModule,
+  DxListModule,
+  DxPopupModule,
+  DxTabPanelModule,
+  DxTemplateModule,
+  DxTextAreaModule,
+  DxTextBoxModule
+} from "devextreme-angular";
 import {
   DxiColumnModule,
   DxiValidationRuleModule,
@@ -38,6 +48,7 @@ import {SecuredPipe} from "./services/secured.pipe";
 import {SharedContentModule} from "./shared-content";
 import {NgOptimizedImage} from "@angular/common";
 import {SharedPipe} from "./services/shared.pipe";
+import {ProfileResolver} from "./pages/profile/profile-resolver";
 
 export function jwtOptionsFactory(tokenService: TokenStorageService) {
   return {
@@ -96,13 +107,21 @@ export function jwtOptionsFactory(tokenService: TokenStorageService) {
     SharedContentModule,
     NgOptimizedImage,
     SecuredPipe,
-    SharedPipe
+    SharedPipe,
+    DxButtonModule,
+    DxTextAreaModule,
+    DxTabPanelModule,
+    DxDateBoxModule,
+    DxListModule,
+    DxPopupModule,
+    DxTextBoxModule
   ],
   providers: [
     SessionService,
     ScreenService,
     AppInfoService,
     AuthenticationService,
+    ProfileResolver
   ],
   bootstrap: [AppComponent]
 })

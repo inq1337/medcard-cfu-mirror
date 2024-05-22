@@ -22,7 +22,6 @@ export class UserPanelComponent {
   @Input()
   menuMode!: string;
 
-  // @Input()
   user!: UserProfile | null;
   downloadUrl: string = environment.api.url;
 

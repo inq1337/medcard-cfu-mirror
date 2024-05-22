@@ -39,4 +39,7 @@ export class AnalysisService {
     return this.httpClient.post<any>(AnalysisService.SERVICE_API_URL + `/` + analysisId + `/` + `image`, formData);
   }
 
+  fillFromPhotos(id: number): Observable<Analysis> {
+    return this.httpClient.put<Analysis>(AnalysisService.SERVICE_API_URL + `/${id}/fill`, null);
+  }
 }

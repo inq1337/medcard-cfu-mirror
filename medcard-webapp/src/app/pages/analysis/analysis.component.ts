@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import notify from 'devextreme/ui/notify';
 import {Page} from '../../model/page';
 import DataSource from 'devextreme/data/data_source';
@@ -6,10 +6,9 @@ import CustomStore from 'devextreme/data/custom_store';
 import {LoadOptions} from 'devextreme/data';
 import {DxDataGridComponent} from 'devextreme-angular';
 import {ScreenService} from '../../shared/services';
-import {ToolbarPreparingEvent} from "devextreme/ui/data_grid";
 import {lastValueFrom} from "rxjs";
 import {AnalysisService} from "../../services/analysis.service";
-import {Analysis, AnalysisParameterStateMapping} from "../../model/analysis";
+import {Analysis} from "../../model/analysis";
 import {onGridOptionsChanged} from "../../shared/services/service-util";
 import {TemplatesService} from "../../services/templates.service";
 import {environment} from "../../../environments/environment";
@@ -28,7 +27,7 @@ import {JWTResponse} from "../../model/JWT-response";
     ShareService
   ]
 })
-export class AnalysisComponent {
+export class AnalysisComponent implements OnInit {
 
   dataSource: DataSource;
   // @ts-ignore
@@ -38,7 +37,14 @@ export class AnalysisComponent {
 
   downloadUrl: string = environment.api.url;
   mobileMode = false;
-  analysisParameterStateMapping = AnalysisParameterStateMapping;
+
+  ngOnInit() {
+    this.loadTemplatesSimple();
+  }
+
+  isSelected(item: any): boolean {
+    return this.selectedItems.indexOf(item) !== -1;
+  }
 
   constructor(private analysisService: AnalysisService,
               private templatesService: TemplatesService,
@@ -52,40 +58,8 @@ export class AnalysisComponent {
         remove: (values) => this.remove(values)
       })
     );
-    console.log(this.dataSource)
     this.mobileMode = this.screenService.sizes['screen-x-small'];
   }
-
-  onToolbarPreparing(e: ToolbarPreparingEvent) {
-    if (e.toolbarOptions.items) {
-      e.toolbarOptions.items.find(value => value.name === 'searchPanel').location = 'center';
-      e.toolbarOptions.items.unshift({
-          location: 'before',
-          widget: 'dxButton',
-          options: {
-            icon: 'refresh',
-            text: 'Обновить',
-            onClick: this.refreshDataGrid.bind(this)
-          }
-        },
-        {
-          location: 'after',
-          widget: 'dxButton',
-          options: {
-            icon: 'share',
-            text: 'Поделиться анализами',
-            onClick: () => this.togglePopupVisibility()
-          }
-        }
-      );
-    }
-  }
-
-  isPopupVisible: boolean = false;
-  selectedItems: any[] = [];
-  templatesList: TemplatesSimpleItem[] = [];
-  selectedDate: string | number | Date = "";
-  sharedUrl: string | null = null;
 
   copyToClipboard(text: string): void {
     navigator.clipboard.writeText(text).then(() => {
@@ -97,16 +71,19 @@ export class AnalysisComponent {
   }
 
   createShareRequest() {
-    let date = this.selectedDate instanceof Date ? this.selectedDate.toISOString() : null;
+    if (!(this.selectedDate instanceof Date) || isNaN(this.selectedDate.getTime())) {
+      notify('Пожалуйста, выберите корректную дату', 'error');
+      return;
+    }
+    let date = this.selectedDate.toISOString();
     let items = this.selectedItems.map(item => item.id);
     this.shareService.createSharedToken(new ShareRequest(items, date)).subscribe({
       next: (response: JWTResponse) => {
-        this.sharedUrl = `${window.location.origin}/#/share?token=${response.accessToken}`;
-        notify('Ссылка успешно создана', 'success');
+        this.sharedUrl = `${window.location.origin}/#/share?token=${response.token}`;
+        notify('Ссылка для совместного доступа создана', 'success');
       },
-      error(e) {
-        notify('Ошибка при создании ссылки', 'error');
-        throw e && e.error && e.error.description;
+      error: () => {
+        notify('Ошибка при создании ссылки для совместного доступа', 'error');
       }
     });
   }
@@ -123,15 +100,19 @@ export class AnalysisComponent {
     });
   }
 
+  isPopupVisible: boolean = false;
+  selectedItems: any[] = [];
+  templatesList: TemplatesSimpleItem[] = [];
+  // @ts-ignore
+  selectedDate: string | number | Date;
+  sharedUrl: string | null = null;
+
+
   togglePopupVisibility(): void {
     this.isPopupVisible = !this.isPopupVisible;
     if (this.isPopupVisible) {
-      this.loadTemplatesSimple();
+      this.loadTemplatesSimple()
     }
-  }
-
-  refreshDataGrid() {
-    this.dataGrid.instance.refresh();
   }
 
   private load(loadOptions: LoadOptions): Promise<any> {
@@ -150,7 +131,11 @@ export class AnalysisComponent {
   }
 
   private insert(values: any): Promise<Analysis> {
-    const analysis = Object.assign(values) as Analysis;
+    const selectedTemplate = this.templatesList.find(template => template.name === values.templateName);
+    const analysis = {
+      ...values,
+      templateId: selectedTemplate ? selectedTemplate.id : null
+    } as Analysis;
 
     return lastValueFrom(this.analysisService.save(analysis))
       .then((created: Analysis) => {
@@ -189,43 +174,6 @@ export class AnalysisComponent {
         notify('Ошибка обновления анализа', 'error');
         throw e && e.error && e.error.description;
       });
-  }
-
-  deleteImage(analysis: Analysis, fileName: string) {
-    this.analysisService.deleteImage(analysis.id, fileName).subscribe({
-      next: (response: any) => {
-        notify('Изображение удалено', 'success');
-        const index = analysis.images.indexOf(fileName);
-        if (index > -1) {
-          analysis.images.splice(index, 1);
-        }
-      },
-      error(e) {
-        notify('Ошибка при удалении изображения', 'error');
-        throw e && e.error && e.error.description;
-      }
-    });
-  }
-
-  onFileSelected(event: any, analysis: Analysis) {
-    const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('image', file, file.name);
-      this.analysisService.addImage(analysis.id, formData).subscribe({
-        next: (response: any) => {
-          if (analysis.images === null) {
-            analysis.images = [];
-          }
-          analysis.images.push(response.fileName)
-          notify('Изображение добавлено', 'success');
-        },
-        error(e) {
-          notify('Ошибка при добавлении изображения', 'error');
-          throw e && e.error && e.error.description;
-        }
-      });
-    }
   }
 
 }

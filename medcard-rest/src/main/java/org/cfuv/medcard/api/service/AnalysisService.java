@@ -24,7 +24,9 @@ public interface AnalysisService {
 
     String addImage(String userEmail, long id, ImageFileDTO imageFileDTO);
 
-    byte[] getImage(String userEmail, long id, String fileName);
+    byte[] getImage(String fileName);
 
     void deleteImage(String userEmail, long id, String fileName);
+
+    Analysis fillFromPhotos(String userEmail, Long id);
 }

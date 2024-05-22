@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {UserProfile} from "../model/user-profile";
 
 const TOKEN_KEY = 'accessToken';
-const USER_KEY = 'medcardUser';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +19,7 @@ export class TokenStorageService {
   }
 
   public saveToken(token: string): void {
+    console.log('token: ' + token);
     this.storage.removeItem(TOKEN_KEY);
     this.storage.setItem(TOKEN_KEY, token);
   }

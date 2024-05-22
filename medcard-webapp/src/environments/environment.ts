@@ -4,12 +4,19 @@
 
 export const environment = {
   production: false,
+  // api: {
+  //   url: 'http://localhost:8080'
+  // },
+  // httpClient: {
+  //   whitelistedDomains: ['localhost:8080'],
+  //   blacklistedRoutes: ['http://localhost:8080/auth']
+  // }
   api: {
-    url: 'http://localhost:8080'
+    url: 'http://192.168.1.181:8080'
   },
   httpClient: {
-    whitelistedDomains: ['localhost:8080'],
-    blacklistedRoutes: ['http://localhost:8080/auth']
+    whitelistedDomains: ['192.168.1.181:8080'],
+    blacklistedRoutes: ['http://192.168.1.181:8080/auth']
   }
 };
 

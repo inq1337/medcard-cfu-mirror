@@ -1,0 +1,29 @@
+<dx-data-grid
+  (onRowUpdated)="updateTemplate()"
+  (onRowInserted)="updateTemplate()"
+  (onRowRemoved)="updateTemplate()"
+  [dataSource]="template.parameters"
+  [showBorders]="false"
+  [columnAutoWidth]="true"
+  [columnHidingEnabled]="true"
+  [editing]="{ allowUpdating: true, allowDeleting: true, allowAdding: true }">
+
+  <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
+  <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
+  <dxi-column dataField="hasState" caption="Наличие состояния" dataType="boolean"></dxi-column>
+
+  <dxo-toolbar>
+    <dxi-item location="before">
+      <div class="toolbar-title">ПАРАМЕТРЫ</div>
+    </dxi-item>
+    <dxi-item location="after">
+      <dx-button
+        icon="plus"
+        text="Добавить параметр"
+        (onClick)="this.dataGrid.instance.addRow()"
+        stylingMode="text">
+      </dx-button>
+    </dxi-item>
+  </dxo-toolbar>
+
+</dx-data-grid>

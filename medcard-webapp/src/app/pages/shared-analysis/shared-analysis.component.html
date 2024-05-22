@@ -6,22 +6,23 @@
               [showBorders]="false"
               [columnAutoWidth]="true"
               [columnHidingEnabled]="true"
-              (onToolbarPreparing)="onToolbarPreparing($event)"
               (onOptionChanged)="onGridOptionsChanged($event)"
               [masterDetail]="{ enabled: true, template: 'detail' }">
 
-  <dxo-remote-operations
-    [paging]="false"
-    [sorting]="false"
-    [filtering]="false">
-  </dxo-remote-operations>
+  <dxo-remote-operations [paging]="true" [sorting]="true" [filtering]="true"></dxo-remote-operations>
 
-  <dxo-search-panel
-    [visible]="false">
-  </dxo-search-panel>
+  <dxo-toolbar>
 
-  <!--  TODO: hide/show on button -->
-  <dxo-filter-row [visible]="false"></dxo-filter-row>
+    <dxi-item location="before">
+      <dx-button
+        [icon]="'refresh'"
+        [text]="'Обновить'"
+        (onClick)="this.dataGrid.instance.refresh()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+
+  </dxo-toolbar>
 
   <dxo-paging [pageSize]="5"></dxo-paging>
   <dxo-pager [showPageSizeSelector]="true"
@@ -51,54 +52,61 @@
     format="dd.MM.yyyy">
   </dxi-column>
 
-  <dxi-column
-    dataField="commentary"
-    caption="Комментарий">
-  </dxi-column>
-
-  <!--TODO: make it look better-->
   <dxo-master-detail [enabled]="true" analysis="detail">
   </dxo-master-detail>
   [allowEditing]="true"
   <div *dxTemplate="let analysis of 'detail'">
-    <div class="master-detail-images">
-      <div *ngFor="let fileName of analysis.data.images; let i = index">
-        <img
-          [src]="downloadUrl + '/share/analysis/' + analysis.data.id + '/image/' + fileName + '?token=' | shared:token | async"/>
-      </div>
-    </div>
-    <div class="master-detail-caption">{{
-        'Параметры анализа'
-      }}
-    </div>
-    <!--TODO: change datasource-->
-    <dx-data-grid
-      [dataSource]="analysis.data.parameters"
-      [showBorders]="false"
-      [columnAutoWidth]="true"
-      [columnHidingEnabled]="true">
-      <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
-      <dxi-column dataField="value" caption="Значение" dataType="string"></dxi-column>
-      <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
-      <dxi-column dataField="state" caption="Состояние">
-        <dxo-lookup
-          [dataSource]="analysisParameterStateMapping"
-          valueExpr="id"
-          displayExpr="value">
-        </dxo-lookup>
-      </dxi-column>
-    </dx-data-grid>
+
+    <dx-tab-panel>
+      <dxi-item title="Изображения">
+        <div class="master-detail-images">
+          <div class="image-container" *ngFor="let fileName of analysis.data.images; let i = index">
+            <div class="image-wrapper">
+              <img class="image"
+                   [src]="downloadUrl + '/analysis/' + analysis.data.id + '/image/' + fileName | secured | async"
+                   (click)="openImagePopup(fileName)"/>
+            </div>
+            <dx-popup *ngIf="popupImageName === fileName" [(visible)]="isPopupVisible" width="60%" height="80%"
+                      [showCloseButton]="true" (onHidden)="resetPopupData()">
+              <div *dxTemplate="let data of 'content'" class="popup-content">
+                <img class="popup-image"
+                     [src]="downloadUrl + '/analysis/' + analysis.data.id + '/image/' + popupImageName | secured | async"/>
+              </div>
+            </dx-popup>
+          </div>
+        </div>
+      </dxi-item>
+
+      <dxi-item title="Параметры">
+        <dx-data-grid
+          [dataSource]="analysis.data.parameters"
+          [showBorders]="false"
+          [columnAutoWidth]="true"
+          [columnHidingEnabled]="true"
+          [editing]="{ allowUpdating: false, allowDeleting: false, allowAdding: false }">
+
+          <dxo-toolbar [visible]="false"/>
+
+          <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
+          <dxi-column dataField="value" caption="Значение" dataType="string"></dxi-column>
+          <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
+          <dxi-column dataField="state" caption="Состояние">
+            <dxo-lookup
+              [dataSource]="analysisParameterStateMapping"
+              valueExpr="id"
+              displayExpr="value">
+            </dxo-lookup>
+          </dxi-column>
+        </dx-data-grid>
+      </dxi-item>
+
+      <dxi-item title="Комментарий">
+        <div class="commentary-section">
+          <dxo-texts [textContent]="analysis.data.commentary"/>
+        </div>
+      </dxi-item>
+    </dx-tab-panel>
   </div>
 
-  <!--TODO: do I need it?-->
-  <!--  <dxi-column-->
-  <!--    [allowEditing]="false"-->
-  <!--    dataField="lastModifiedAt"-->
-  <!--    caption="Обновлен"-->
-  <!--    dataType="date"-->
-  <!--    format="dd.MM.yyyy hh:mm"-->
-  <!--    [formItem]="{visible: false}"-->
-  <!--    [allowSearch]="false">-->
-  <!--  </dxi-column>-->
 
 </dx-data-grid>

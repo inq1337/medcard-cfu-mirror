@@ -1,0 +1,87 @@
+<dx-tab-panel>
+  <dxi-item title="Изображения">
+    <div class="master-detail-images">
+      <div class="add-image-button-container">
+        <dx-button icon="add" text="Добавить изображение" (onClick)="uploadImage()"></dx-button>
+      </div>
+      <div class="image-container" *ngFor="let fileName of analysis.images; let i = index">
+        <div class="image-wrapper">
+          <img class="image" [src]="downloadUrl + '/analysis/' + analysis.id + '/image/' + fileName | secured | async"
+               (click)="openImagePopup(fileName)"/>
+          <dx-button class="delete-button" icon="trash" stylingMode="text" (click)="deleteImage(fileName)"></dx-button>
+        </div>
+        <dx-popup *ngIf="popupImageName === fileName" [(visible)]="isPopupVisible" width="60%" height="80%"
+                  [showCloseButton]="true" (onHidden)="resetPopupData()">
+          <div *dxTemplate="let data of 'content'" class="popup-content">
+            <img class="popup-image"
+                 [src]="downloadUrl + '/analysis/' + analysis.id + '/image/' + popupImageName | secured | async"/>
+          </div>
+        </dx-popup>
+      </div>
+    </div>
+  </dxi-item>
+
+  <dxi-item title="Параметры">
+    <dx-data-grid
+      (onRowUpdated)="updateAnalysis()"
+      (onRowInserted)="updateAnalysis()"
+      (onRowRemoved)="updateAnalysis()"
+      [dataSource]="analysis.parameters"
+      [showBorders]="false"
+      [columnAutoWidth]="true"
+      [columnHidingEnabled]="true"
+      [editing]="{ allowUpdating: true, allowDeleting: true, allowAdding: true }">
+
+      <dxo-toolbar>
+        <dxi-item location="after" [visible]="isCustomTemplate">
+          <dx-button
+            icon="plus"
+            text="Добавить параметр"
+            (onClick)="this.dataGrid.instance.addRow()"
+            stylingMode="text">
+          </dx-button>
+        </dxi-item>
+        <dxi-item location="after">
+          <dx-button
+            icon="plus"
+            text="Заполнить из фотографий"
+            (onClick)="fillFromPhotos()"
+            stylingMode="text"
+            type="success">
+          </dx-button>
+        </dxi-item>
+      </dxo-toolbar>
+
+      <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
+      <dxi-column dataField="value" caption="Значение" dataType="string"></dxi-column>
+      <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
+      <dxi-column dataField="state" caption="Состояние" *ngIf="shouldShowStateColumn">
+        <dxo-lookup
+          [dataSource]="analysisParameterStateMapping"
+          valueExpr="id"
+          displayExpr="value">
+        </dxo-lookup>
+      </dxi-column>
+
+    </dx-data-grid>
+  </dxi-item>
+
+  <dxi-item title="Комментарий">
+    <div class="commentary-section">
+      <dx-text-area
+        [(value)]="analysis.commentary"
+        placeholder="Введите комментарий"
+        height="100">
+      </dx-text-area>
+      <div class="update-comment-button-container">
+        <dx-button
+          text="Обновить комментарий"
+          (onClick)="updateCommentary()"
+          class="update-comment-button">
+        </dx-button>
+      </div>
+
+    </div>
+  </dxi-item>
+</dx-tab-panel>
+

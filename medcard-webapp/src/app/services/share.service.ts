@@ -4,7 +4,6 @@ import {Observable} from "rxjs";
 import {Page} from "../model/page";
 import {Analysis} from "../model/analysis";
 import {Injectable} from "@angular/core";
-import {Template} from "../model/template";
 import {ShareRequest} from "../model/share-request";
 import {JWTResponse} from "../model/JWT-response";
 
@@ -23,7 +22,7 @@ export class ShareService {
   }
 
   createSharedToken(request: ShareRequest): Observable<JWTResponse> {
-    return this.httpClient.post<JWTResponse>(ShareService.SERVICE_API_URL, request);
+    return this.httpClient.post<JWTResponse>(`${ShareService.SERVICE_API_URL}/create-link`, request);
   }
 
   private getHeaders(token: string) {

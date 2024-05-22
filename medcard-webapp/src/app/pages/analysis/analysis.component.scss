@@ -5,8 +5,12 @@
 }
 
 .dx-list {
-  max-height: 250px;
+  max-height: 150px;
   overflow-y: auto;
+}
+
+.dx-date-box {
+  margin-top: 20px;
 }
 
 .popup-actions {
@@ -20,16 +24,28 @@
 }
 
 .cancel-button {
-
+  margin-right: auto;
 }
 
 .shared-url-container {
-   display: flex;
-   align-items: center;
-   gap: 10px;
- }
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
 
 .shared-url-input {
   flex-grow: 1;
 }
 
+.list-item {
+  border: 2px solid #ccc;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.selected-item {
+  border-color: orangered;
+}

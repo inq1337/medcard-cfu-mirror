@@ -4,6 +4,7 @@ import org.cfuv.medcard.dto.AnalysisTemplateRequest;
 import org.cfuv.medcard.dto.TemplateSimpleItem;
 import org.cfuv.medcard.dto.filter.AnalysisTemplateFilter;
 import org.cfuv.medcard.model.AnalysisTemplate;
+import org.cfuv.medcard.model.user.CardUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,8 +22,7 @@ public interface AnalysisTemplateService {
 
     AnalysisTemplate loadByIdAndCardUser(long id, String userEmail);
 
-    AnalysisTemplate loadByNameAndCardUser(String templateName, String userEmail);
-
     List<TemplateSimpleItem> getTemplatesSimple(String userEmail);
 
+    void createStartTemplates(CardUser cardUser);
 }

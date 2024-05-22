@@ -10,7 +10,7 @@ public class AnalysisSpecificationFilter extends SpecificationFilter<Analysis> {
 
     public AnalysisSpecificationFilter(List<RequestFilter> filters) {
         super(Analysis.class, filters, ImmutableMap.of(
-                "cardUserId", "cardUser.id"
+                "templateNAme", "template.name"
         ));
     }
 

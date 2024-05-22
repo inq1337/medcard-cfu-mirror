@@ -1,6 +1,11 @@
 <h2 class="content-block">Анализы</h2>
 
-<dx-popup [visible]="isPopupVisible" [closeOnOutsideClick]="true">
+<dx-popup
+  [(visible)]="isPopupVisible"
+  [showTitle]="true"
+  title="Поделиться анализами"
+  [width]="800"
+  [height]="600">
   <div class="popup-content">
     <dx-list
       [items]="templatesList"
@@ -8,20 +13,27 @@
       [(selectedItems)]="selectedItems"
       displayExpr="name"
       valueExpr="id">
+      <div *dxTemplate="let data of 'item'">
+        <div [ngClass]="{'list-item': true, 'selected-item': isSelected(data)}">
+          <span>{{ data.name }}</span>
+        </div>
+      </div>
     </dx-list>
-    <!--TODO: fix clicking-->
+
     <dx-date-box
       type="date"
       placeholder="Выберите дату"
       displayFormat="dd/MM/yyyy"
-      [(value)]="selectedDate">
+      [(value)]="selectedDate"
+      [openOnFieldClick]="true">
     </dx-date-box>
     <div *ngIf="sharedUrl" class="shared-url-container">
       <dx-text-box
         [value]="sharedUrl"
         [inputAttr]="{ 'aria-label': 'Name' }"
         [readOnly]="true"
-      ></dx-text-box>
+        class="shared-url-input">
+      </dx-text-box>
       <dx-button
         text="Копировать"
         icon="copy"
@@ -32,10 +44,8 @@
       <dx-button text="Отмена" class="cancel-button" (onClick)="isPopupVisible = false"></dx-button>
       <dx-button text="Создать" class="create-button" (onClick)="createShareRequest()"></dx-button>
     </div>
-
   </div>
 </dx-popup>
-
 
 <dx-data-grid class="dx-card wide-card"
               id="suDataGrid"
@@ -43,15 +53,43 @@
               [showBorders]="false"
               [columnAutoWidth]="true"
               [columnHidingEnabled]="true"
-              (onToolbarPreparing)="onToolbarPreparing($event)"
               (onOptionChanged)="onGridOptionsChanged($event)"
               [masterDetail]="{ enabled: true, template: 'detail' }">
 
-  <dxo-remote-operations
-    [paging]="true"
-    [sorting]="true"
-    [filtering]="true">
-  </dxo-remote-operations>
+  <dxo-remote-operations [paging]="true" [sorting]="true" [filtering]="true"></dxo-remote-operations>
+
+  <dxo-toolbar>
+    <dxi-item name="groupPanel"></dxi-item>
+
+    <dxi-item name="searchPanel" location="center"></dxi-item>
+
+    <dxi-item location="before">
+      <dx-button
+        [icon]="'refresh'"
+        [text]="'Обновить'"
+        (onClick)="this.dataGrid.instance.refresh()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+
+    <dxi-item location="after">
+      <dx-button
+        [icon]="'share'"
+        [text]="'Поделиться анализами'"
+        (onClick)="togglePopupVisibility()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+
+    <dxi-item location="after">
+      <dx-button
+        [icon]="'plus'"
+        [text]="'Добавить анализ'"
+        (onClick)="dataGrid.instance.addRow()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+  </dxo-toolbar>
 
   <dxo-search-panel
     [visible]="true"
@@ -59,7 +97,7 @@
     placeholder="Поиск...">
   </dxo-search-panel>
 
-  <dxo-filter-row [visible]="false"></dxo-filter-row>
+  <!--  <dxo-filter-row [visible]="true"></dxo-filter-row>-->
 
   <dxo-paging [pageSize]="5"></dxo-paging>
   <dxo-pager [showPageSizeSelector]="true"
@@ -72,6 +110,9 @@
     [allowDeleting]="true">
   </dxo-editing>
 
+  <dxi-column
+    dataField="id" [visible]="false" sortOrder="desc">
+  </dxi-column>
 
   <dxi-column
     dataField="name"
@@ -89,7 +130,9 @@
 
   <dxi-column
     dataField="templateName"
-    caption="Тип">
+    caption="Тип"
+    [lookup]="{ dataSource: templatesList, displayExpr: 'name', valueExpr: 'name' }"
+    [allowEditing]="true">
     <dxi-validation-rule
       type="required"
       message="Обязательное поле">
@@ -113,63 +156,14 @@
     </dxi-validation-rule>
   </dxi-column>
 
-  <dxi-column
-    dataField="commentary"
-    caption="Комментарий">
-    <dxi-validation-rule
-      type="stringLength"
-      [max]="2000"
-      message="Не более 2000 символов">
-    </dxi-validation-rule>
-  </dxi-column>
-
   <dxo-master-detail [enabled]="true" analysis="detail">
   </dxo-master-detail>
   [allowEditing]="true"
   <div *dxTemplate="let analysis of 'detail'">
-    <div class="master-detail-images">
-      <div *ngFor="let fileName of analysis.data.images; let i = index">
-        <img [src]="downloadUrl + '/analysis/' + analysis.data.id + '/image/' + fileName | secured | async"/>
-        <button (click)="deleteImage(analysis.data, fileName)">Удалить</button>
-      </div>
-      <input type="file" (change)="onFileSelected($event, analysis.data)"/>
-    </div>
-    <div class="master-detail-caption">{{
-        'Параметры анализа'
-      }}
-    </div>
-    <!--TODO: change datasource-->
-    <dx-data-grid
-      (onRowUpdated)="updateAnalysis(analysis.data)"
-      (onRowInserted)="updateAnalysis(analysis.data)"
-      (onRowRemoved)="updateAnalysis(analysis.data)"
-      [dataSource]="analysis.data.parameters"
-      [showBorders]="false"
-      [columnAutoWidth]="true"
-      [columnHidingEnabled]="true"
-      [editing]="{ allowUpdating: true, allowDeleting: true, allowAdding: true }">
-      <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
-      <dxi-column dataField="value" caption="Значение" dataType="string"></dxi-column>
-      <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
-      <dxi-column dataField="state" caption="Состояние">
-        <dxo-lookup
-          [dataSource]="analysisParameterStateMapping"
-          valueExpr="id"
-          displayExpr="value">
-        </dxo-lookup>
-      </dxi-column>
-    </dx-data-grid>
+    <app-analysis-detail
+      [analysis]="analysis.data"
+      [downloadUrl]="downloadUrl"
+      (analysisUpdated)="updateAnalysis($event)">
+    </app-analysis-detail>
   </div>
-
-  <!--TODO: do I need it?-->
-  <!--  <dxi-column-->
-  <!--    [allowEditing]="false"-->
-  <!--    dataField="lastModifiedAt"-->
-  <!--    caption="Обновлен"-->
-  <!--    dataType="date"-->
-  <!--    format="dd.MM.yyyy hh:mm"-->
-  <!--    [formItem]="{visible: false}"-->
-  <!--    [allowSearch]="false">-->
-  <!--  </dxi-column>-->
-
 </dx-data-grid>

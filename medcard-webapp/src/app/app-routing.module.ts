@@ -13,8 +13,9 @@ import {DxButtonModule, DxDataGridModule, DxFormModule} from 'devextreme-angular
 import {TemplatesComponent} from "./pages/templates/templates.component";
 import {AnalysisComponent} from "./pages/analysis/analysis.component";
 import {SecuredPipe} from "./services/secured.pipe";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, NgIf} from "@angular/common";
 import {SharedAnalysisComponent} from "./pages/shared-analysis/shared-analysis.component";
+import {ProfileResolver} from "./pages/profile/profile-resolver";
 
 const routes: Routes = [
   {
@@ -36,7 +37,10 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService],
+    resolve: {
+      userProfile: ProfileResolver
+    }
   },
   {
     path: 'home',
@@ -70,7 +74,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {useHash: true}), DxDataGridModule, DxFormModule, SecuredPipe, AsyncPipe, DxButtonModule],
+  imports: [RouterModule.forRoot(routes, {useHash: true}), DxDataGridModule, DxFormModule, SecuredPipe, AsyncPipe, DxButtonModule, NgIf],
   providers: [AuthGuardService],
   exports: [RouterModule],
   declarations: [

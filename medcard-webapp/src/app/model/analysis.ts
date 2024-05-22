@@ -1,8 +1,9 @@
 export class Analysis {
-  constructor(id: number, name: string, type: string, analysisDate: Date, cardUserId: number, parameters: AnalysisParameter[], commentary: string, deleted: boolean, images: string[]) {
+  constructor(id: number, name: string, templateName: string, templateId: number, analysisDate: Date, cardUserId: number, parameters: AnalysisParameter[], commentary: string, deleted: boolean, images: string[]) {
     this.id = id;
     this.name = name;
-    this.type = type;
+    this.templateName = templateName;
+    this.templateId = templateId;
     this.analysisDate = analysisDate;
     this.cardUserId = cardUserId;
     this.parameters = parameters;
@@ -13,7 +14,8 @@ export class Analysis {
 
   id: number
   name: string
-  type: string
+  templateName: string
+  templateId: number
   analysisDate: Date
   cardUserId: number
   parameters: AnalysisParameter[]
@@ -39,7 +41,10 @@ export class AnalysisParameter {
 }
 
 export enum ParameterState {
-  elevated, low
+  elevated,
+  low,
+  not_specified
+
 }
 
 export const AnalysisParameterStateMapping = [
@@ -50,5 +55,9 @@ export const AnalysisParameterStateMapping = [
   {
     id: 'low',
     value: 'Понижен'
+  },
+  {
+    id: 'not_specified',
+    value: 'Не указано'
   }
 ];

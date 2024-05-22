@@ -6,9 +6,32 @@
               [showBorders]="false"
               [columnAutoWidth]="true"
               [columnHidingEnabled]="true"
-              (onToolbarPreparing)="onToolbarPreparing($event)"
               (onOptionChanged)="onGridOptionsChanged($event)"
               [masterDetail]="{ enabled: true, template: 'detail' }">
+
+  <dxo-toolbar>
+    <dxi-item name="groupPanel"></dxi-item>
+
+    <dxi-item name="searchPanel" location="center"></dxi-item>
+
+    <dxi-item location="before">
+      <dx-button
+        [icon]="'refresh'"
+        [text]="'Обновить'"
+        (onClick)="this.dataGrid.instance.refresh()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+
+    <dxi-item location="after">
+      <dx-button
+        [icon]="'plus'"
+        [text]="'Добавить шаблон'"
+        (onClick)="dataGrid.instance.addRow()"
+        [stylingMode]="'text'">
+      </dx-button>
+    </dxi-item>
+  </dxo-toolbar>
 
   <dxo-remote-operations
     [paging]="true"
@@ -34,15 +57,6 @@
     [allowUpdating]="true"
     [allowDeleting]="true">
 
-    <dxo-texts
-      [addRow]="'Новый'"
-      [editRow]="'Редактировать'"
-      [deleteRow]="'Удалить'"
-      [confirmDeleteMessage]="'Вы уверены, что хотите удалить?'"
-      [saveRowChanges]="'Сохранить'"
-      [cancelRowChanges]="'Отмена'">
-    </dxo-texts>
-
     <dxo-popup
       title="Шаблон"
       [showTitle]="true">
@@ -51,43 +65,21 @@
   </dxo-editing>
 
   <dxi-column
+    dataField="id" [visible]="false" sortOrder="desc">
+  </dxi-column>
+
+  <dxi-column
     dataField="name"
     [allowEditing]="true"
     caption="Название">
   </dxi-column>
 
-  <!--TODO: make it look better-->
   <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
-  [allowEditing]="true"
-  <div *dxTemplate="let template of 'detail'">
-    <div class="master-detail-caption">{{
-        'Параметры шаблона'
-      }}
-    </div>
-    <dx-data-grid
-      (onRowUpdated)="updateTemplate(template.data)"
-      (onRowInserted)="updateTemplate(template.data)"
-      (onRowRemoved)="updateTemplate(template.data)"
-      [dataSource]="template.data.parameters"
-      [showBorders]="false"
-      [columnAutoWidth]="true"
-      [columnHidingEnabled]="true"
-      [editing]="{ allowUpdating: true, allowDeleting: true, allowAdding: true }">
-      <dxi-column dataField="name" caption="Название" dataType="string"></dxi-column>
-      <dxi-column dataField="unit" caption="Единица измерения" dataType="string"></dxi-column>
-      <dxi-column dataField="hasState" caption="Наличие состояния" dataType="boolean"></dxi-column>
-    </dx-data-grid>
+  <div *dxTemplate="let analysis of 'detail'">
+    <app-templates-detail
+      [template]="analysis.data"
+      (templateUpdated)="updateTemplate($event)">
+    </app-templates-detail>
   </div>
-
-  <!--TODO: do I need it?-->
-  <!--  <dxi-column-->
-  <!--    [allowEditing]="false"-->
-  <!--    dataField="createdAt"-->
-  <!--    caption="Создан"-->
-  <!--    dataType="date"-->
-  <!--    format="dd.MM.yyyy hh:mm"-->
-  <!--    [formItem]="{visible: false}"-->
-  <!--    [allowSearch]="false">-->
-  <!--  </dxi-column>-->
 
 </dx-data-grid>

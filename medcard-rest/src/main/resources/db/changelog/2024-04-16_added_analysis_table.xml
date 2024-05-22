@@ -34,9 +34,6 @@
             <column name="last_modified_at" type="DATETIME"/>
         </createTable>
     </changeSet>
-    <changeSet id="2024-04-16_1_3" author="inq1337 (generated)">
-        <addUniqueConstraint columnNames="name" constraintName="uc_analysis_name" tableName="analysis"/>
-    </changeSet>
     <changeSet id="2024-04-16_1_4" author="inq1337 (generated)">
         <addForeignKeyConstraint baseColumnNames="card_user_id" baseTableName="analysis"
                                  constraintName="FK_ANALYSIS_ON_CARDUSER" referencedColumnNames="id"

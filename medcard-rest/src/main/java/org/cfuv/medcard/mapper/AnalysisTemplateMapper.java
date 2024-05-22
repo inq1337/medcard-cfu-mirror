@@ -1,8 +1,10 @@
 package org.cfuv.medcard.mapper;
 
+import org.cfuv.medcard.dto.AnalysisTemplateRequest;
 import org.cfuv.medcard.dto.AnalysisTemplateResponse;
 import org.cfuv.medcard.dto.page.AnalysisTemplatePageResponse;
 import org.cfuv.medcard.model.AnalysisTemplate;
+import org.cfuv.medcard.model.user.CardUser;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,10 @@ public interface AnalysisTemplateMapper {
 
     AnalysisTemplateMapper INSTANCE = Mappers.getMapper(AnalysisTemplateMapper.class);
 
-    AnalysisTemplate toEntity(AnalysisTemplateResponse analysisTemplateResponse);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "parameters", expression = "java(new ArrayList<>())")
+    AnalysisTemplate toEntity(AnalysisTemplateRequest request, CardUser cardUser);
 
     AnalysisTemplateResponse toDTO(AnalysisTemplate analysisTemplate);
 
@@ -25,7 +30,9 @@ public interface AnalysisTemplateMapper {
     @Mapping(target = "items", source = "content")
     AnalysisTemplatePageResponse toPageResponse(Page<AnalysisTemplate> page);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "parameters", expression = "java(request.parameters())")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    AnalysisTemplate partialUpdate(AnalysisTemplateResponse analysisTemplateResponse, @MappingTarget AnalysisTemplate analysisTemplate);
+    AnalysisTemplate partialUpdate(AnalysisTemplateRequest request, @MappingTarget AnalysisTemplate analysisTemplate);
 
 }

@@ -30,11 +30,11 @@ public class CardUser extends AbstractAuditingEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
-    private UserRole role;
+    private PrivilegeLevel privilegeLevel = PrivilegeLevel.BASIC;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
-    private UserStatus status;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(length = 100, nullable = false)
     private String firstname;

@@ -1,7 +1,7 @@
 export class JWTResponse {
-  accessToken: string;
+  token: string;
 
   constructor(token: string) {
-    this.accessToken = token;
+    this.token = token;
   }
 }

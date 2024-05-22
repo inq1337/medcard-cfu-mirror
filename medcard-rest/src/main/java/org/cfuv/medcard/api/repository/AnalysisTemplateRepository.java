@@ -31,6 +31,7 @@ public interface AnalysisTemplateRepository extends JpaRepository<AnalysisTempla
 
     Optional<AnalysisTemplate> findByIdAndCardUserAndDeletedIsFalse(Long id, CardUser user);
 
-    Optional<AnalysisTemplate> findByNameAndCardUserAndDeletedIsFalse(String templateName, CardUser cardUser);
+    int countByCardUserAndNameAndDeletedIsFalse(CardUser cardUser, String name);
 
+    int countByCardUserAndDeletedIsFalse(CardUser cardUser);
 }

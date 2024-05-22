@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
+@RequestMapping("/share")
 @RestController
 public class ShareController {
 
@@ -23,13 +24,13 @@ public class ShareController {
     private final AnalysisService analysisService;
     private final ImageService imageService;
 
-    @PostMapping("/share")
+    @PostMapping("/create-link")
     public ResponseEntity<JWTResponse> create(Authentication authentication, @RequestBody ShareDTO shareDTO) {
         String token = shareService.createToken(authentication.getName(), shareDTO);
         return ResponseEntity.ok(new JWTResponse(token));
     }
 
-    @GetMapping("/share/analysis")
+    @GetMapping("/analysis")
     public ResponseEntity<AnalysisPageResponse> get(@RequestHeader("Shared-Token") String token,
                                                     Pageable p) {
         String userEmail = shareService.getEmailFromToken(token);
@@ -38,7 +39,7 @@ public class ShareController {
         return ResponseEntity.ok(AnalysisMapper.INSTANCE.toPageResponse(all));
     }
 
-    @GetMapping("/share/analysis/{id}/image/{fileName}")
+    @GetMapping("/analysis/{id}/image/{fileName}")
     public ResponseEntity<byte[]> getImage(@RequestHeader("Shared-Token") String token,
                                            @PathVariable String id,
                                            @PathVariable String fileName) {

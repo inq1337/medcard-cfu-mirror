@@ -8,5 +8,8 @@ public enum ParameterState {
     ELEVATED,
 
     @JsonProperty("low")
-    LOW
+    LOW,
+
+    @JsonProperty("not_specified")
+    NOT_SPECIFIED
 }

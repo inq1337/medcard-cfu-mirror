@@ -26,9 +26,9 @@ public class AnalysisController {
     private final AnalysisService analysisService;
 
     @GetMapping("/analysis")
-    public ResponseEntity<AnalysisPageResponse> getAllAnalysis(Authentication authentication,
-                                                               AnalysisFilter filter,
-                                                               Pageable p) {
+    public ResponseEntity<AnalysisPageResponse> get(Authentication authentication,
+                                                    AnalysisFilter filter,
+                                                    Pageable p) {
         Page<Analysis> all = analysisService.getAll(authentication.getName(), filter, p);
         return ResponseEntity.ok(AnalysisMapper.INSTANCE.toPageResponse(all));
     }
@@ -67,7 +67,7 @@ public class AnalysisController {
     public ResponseEntity<byte[]> getImage(Authentication authentication,
                                            @PathVariable long id,
                                            @PathVariable String fileName) {
-        byte[] imageFile = analysisService.getImage(authentication.getName(), id, fileName);
+        byte[] imageFile = analysisService.getImage(fileName);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageFile);
     }
 
@@ -77,6 +77,13 @@ public class AnalysisController {
                                             @PathVariable String fileName) {
         analysisService.deleteImage(authentication.getName(), id, fileName);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/analysis/{id}/fill")
+    public ResponseEntity<AnalysisResponse> fillFromPhotos(@PathVariable Long id,
+                                                           Authentication authentication) {
+        Analysis updated = analysisService.fillFromPhotos(authentication.getName(), id);
+        return ResponseEntity.ok(AnalysisMapper.INSTANCE.toDto(updated));
     }
 
 }

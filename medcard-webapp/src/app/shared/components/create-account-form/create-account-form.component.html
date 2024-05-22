@@ -33,7 +33,7 @@
     </dxi-item>
 
     <dxi-item dataField="confirmedPassword" editorType="dxTextBox"
-              [editorOptions]="{ stylingMode: 'filled', placeholder: 'Confirm Password', mode: 'password' }">
+              [editorOptions]="{ stylingMode: 'filled', placeholder: 'Подтвердите пароль', mode: 'password' }">
       <dxi-validation-rule type="required" message="Введите пароль ещё раз"></dxi-validation-rule>
       <dxi-validation-rule type="custom" message="Пароли не совпадают" [validationCallback]="confirmPassword">
       </dxi-validation-rule>

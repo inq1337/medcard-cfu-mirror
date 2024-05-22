@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SpecificationFilter<T> implements Specification<T> {
 
-    private static final int MAXIMUM_DEPTH_LEVEL = 4;
-
     protected final List<RequestFilter> filters;
     protected final Class<T> entityClass;
     private final Map<String, String> complexTypesMapping = new HashMap<>();
@@ -182,7 +180,7 @@ public class SpecificationFilter<T> implements Specification<T> {
 
     private Class<?> getFieldType(Class<?> classToCheck, String filterFieldName, int currentDepth)
             throws NoSuchFieldException {
-        if (currentDepth < MAXIMUM_DEPTH_LEVEL && Objects.nonNull(classToCheck)) {
+        if (!Object.class.equals(classToCheck)) {
             if (isClassContainsField(classToCheck, filterFieldName)) {
                 return classToCheck.getDeclaredField(filterFieldName).getType();
             } else {

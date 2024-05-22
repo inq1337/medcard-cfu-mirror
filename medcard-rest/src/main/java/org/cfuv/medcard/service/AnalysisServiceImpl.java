@@ -1,6 +1,7 @@
 package org.cfuv.medcard.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.cfuv.medcard.api.repository.AnalysisRepository;
 import org.cfuv.medcard.api.service.AnalysisService;
 import org.cfuv.medcard.api.service.AnalysisTemplateService;
@@ -12,9 +13,11 @@ import org.cfuv.medcard.dto.ShareDTO;
 import org.cfuv.medcard.dto.filter.AnalysisFilter;
 import org.cfuv.medcard.exception.IncompatibleParametersException;
 import org.cfuv.medcard.exception.ObjectNotFoundException;
+import org.cfuv.medcard.mapper.AnalysisMapper;
 import org.cfuv.medcard.model.Analysis;
 import org.cfuv.medcard.model.AnalysisTemplate;
 import org.cfuv.medcard.model.parameter.AnalysisParameter;
+import org.cfuv.medcard.model.parameter.ParameterState;
 import org.cfuv.medcard.model.parameter.TemplateParameter;
 import org.cfuv.medcard.model.user.CardUser;
 import org.cfuv.medcard.util.filter.DxUtil;
@@ -53,51 +56,48 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Analysis create(String userEmail, AnalysisRequest request) {
-        // TODO: refactor on AnalysisMapper.INSTANCE.toEntity
-        Analysis analysis = new Analysis();
-        analysis.setCardUser(cardUserService.loadByEmail(userEmail));
-        analysis.setName(request.name());
-        analysis.setTemplate(analysisTemplateService.loadByNameAndCardUser(request.templateName(), userEmail));
-        analysis.setAnalysisDate(request.analysisDate());
+        AnalysisTemplate analysisTemplate = analysisTemplateService.loadByIdAndCardUser(request.templateId(), userEmail);
+        CardUser cardUser = cardUserService.loadByEmail(userEmail);
+        Analysis analysis = AnalysisMapper.INSTANCE.toEntity(request, cardUser, analysisTemplate);
         if (!"custom".equals(request.templateName())) {
-            analysis.setParameters(createAnalysisParametersByTemplate(userEmail, request.templateName()));
-        } else {
-            analysis.setParameters(new ArrayList<>());
+            analysis.setParameters(createAnalysisParametersByTemplate(analysisTemplate));
         }
-        analysis.setCommentary(request.commentary());
         return analysisRepository.save(analysis);
     }
 
     @Override
     public Analysis update(String userEmail, AnalysisRequest request, Long id) {
-        Analysis analysis = loadByIdAndCardUser(id, userEmail);
-        analysis.setName(request.name());
-        analysis.setTemplate(analysisTemplateService.loadByNameAndCardUser(request.templateName(), userEmail));
-        analysis.setAnalysisDate(request.analysisDate());
-        if (!"custom".equals(request.templateName())) {
-            checkParametersEquality(userEmail, request.templateName(), request.parameters());
+        Analysis analysis = AnalysisMapper.INSTANCE.partialUpdate(request, loadByIdAndCardUser(id, userEmail));
+        if (!analysis.getTemplate().getName().equals(request.templateName())) {
+            throw new RuntimeException("You can't change analysis template");
         }
-        analysis.setParameters(request.parameters());
-        analysis.setCommentary(request.commentary());
+        if (!"custom".equals(request.templateName())) {
+            checkParametersEquality(analysis.getTemplate(), request.parameters());
+            analysis.setParameters(request.parameters());
+        }
         return analysisRepository.save(analysis);
     }
 
-    private List<AnalysisParameter> createAnalysisParametersByTemplate(String userEmail, String analysisType) {
-        AnalysisTemplate template = analysisTemplateService.loadByNameAndCardUser(analysisType, userEmail);
-        List<TemplateParameter> templateParameters = template.getParameters();
+    private List<AnalysisParameter> createAnalysisParametersByTemplate(AnalysisTemplate analysisTemplate) {
+        List<TemplateParameter> templateParameters = analysisTemplate.getParameters();
         List<AnalysisParameter> analysisParameters = new ArrayList<>();
-        for (TemplateParameter templateParameter : templateParameters) {
-            AnalysisParameter analysisParameter = new AnalysisParameter(templateParameter.name(), null, templateParameter.unit(), null);
+        for (TemplateParameter parameter : templateParameters) {
+            AnalysisParameter analysisParameter =
+                    new AnalysisParameter(
+                            parameter.name(),
+                            null,
+                            parameter.unit(),
+                            parameter.hasState() ? ParameterState.NOT_SPECIFIED : null
+                    );
             analysisParameters.add(analysisParameter);
         }
         return analysisParameters;
     }
 
-    private void checkParametersEquality(String userEmail, String analysisType, List<AnalysisParameter> parameters) {
-        AnalysisTemplate templateParameter = analysisTemplateService.loadByNameAndCardUser(analysisType, userEmail);
-        List<TemplateParameter> templateParameters = templateParameter.getParameters();
+    private void checkParametersEquality(AnalysisTemplate analysisTemplate, List<AnalysisParameter> parameters) {
+        List<TemplateParameter> templateParameters = analysisTemplate.getParameters();
         if (parameters.size() != templateParameters.size()) {
-            throw IncompatibleParametersException.build(analysisType);
+            throw IncompatibleParametersException.build(analysisTemplate.getName());
         }
     }
 
@@ -127,7 +127,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public byte[] getImage(String userEmail, long id, String fileName) {
+    public byte[] getImage(String fileName) {
         return imageService.get(fileName);
     }
 
@@ -140,6 +140,11 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysis.setImages(images);
         imageService.delete(fileName);
         analysisRepository.save(analysis);
+    }
+
+    @Override
+    public Analysis fillFromPhotos(String userEmail, Long id) {
+        throw new NotImplementedException("Account privilege levels functionality is not implemented yet");
     }
 
 }

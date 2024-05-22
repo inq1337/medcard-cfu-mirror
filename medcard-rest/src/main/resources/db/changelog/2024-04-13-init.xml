@@ -24,10 +24,10 @@
             <column name="password" type="VARCHAR(200)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="VARCHAR(50)">
+            <column name="privilege_level" type="VARCHAR(50)" defaultValue="BASIC">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="VARCHAR(50)">
+            <column name="status" type="VARCHAR(50)" defaultValue="ACTIVE">
                 <constraints nullable="false"/>
             </column>
             <column name="avatar" type="VARCHAR(255)"/>

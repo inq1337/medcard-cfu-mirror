@@ -92,4 +92,16 @@ export class SharedAnalysisComponent {
       });
   }
 
+  isPopupVisible: boolean = false;
+  popupImageName: string = '';
+
+
+  openImagePopup(fileName: string) {
+    this.popupImageName = fileName;
+    this.isPopupVisible = true;
+  }
+
+  resetPopupData() {
+    this.popupImageName = '';
+  }
 }

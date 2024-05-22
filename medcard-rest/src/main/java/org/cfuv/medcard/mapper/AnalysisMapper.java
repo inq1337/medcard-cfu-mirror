@@ -1,8 +1,11 @@
 package org.cfuv.medcard.mapper;
 
+import org.cfuv.medcard.dto.AnalysisRequest;
 import org.cfuv.medcard.dto.AnalysisResponse;
 import org.cfuv.medcard.dto.page.AnalysisPageResponse;
 import org.cfuv.medcard.model.Analysis;
+import org.cfuv.medcard.model.AnalysisTemplate;
+import org.cfuv.medcard.model.user.CardUser;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -17,19 +20,23 @@ public interface AnalysisMapper {
     @Mapping(target = "items", source = "content")
     AnalysisPageResponse toPageResponse(Page<Analysis> page);
 
-//    @Mapping(source = "cardUserId", target = "cardUser.id")
-//    @Mapping(source = "cardUserId", target = "cardUser.id")
-//    Analysis toEntity(AnalysisRequest analysisResponse);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "name", source = "request.name")
+    @Mapping(target = "template", source = "template")
+    @Mapping(target = "cardUser", source = "cardUser")
+    @Mapping(target = "parameters", expression = "java(new ArrayList<>())")
+    Analysis toEntity(AnalysisRequest request, CardUser cardUser, AnalysisTemplate template);
 
     @Mapping(source = "template.name", target = "templateName")
     @Mapping(source = "template.id", target = "templateId")
     @Mapping(source = "cardUser.id", target = "cardUserId")
     AnalysisResponse toDto(Analysis analysis);
 
-    @Mapping(source = "templateName", target = "template.name")
-    @Mapping(source = "templateId", target = "template.id")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "cardUserId", target = "cardUser.id")
-    Analysis partialUpdate(AnalysisResponse analysisResponse, @MappingTarget Analysis analysis);
+    @Mapping(target = "template", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "parameters", ignore = true)
+    Analysis partialUpdate(AnalysisRequest request, @MappingTarget Analysis analysis);
 
 }
